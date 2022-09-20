@@ -31,10 +31,9 @@ const mongoose = require("mongoose");
       street: {type:String},
       city: {type:String},
       pincode: {type:String}
-    },
-    timeStamps:true
-
-})
+    }
+},
+{timestamps:true})
 
 module.exports=mongoose.model('user', userSchema)
    
