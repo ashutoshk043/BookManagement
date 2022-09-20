@@ -5,17 +5,17 @@ const createUser = async function (req, res) {
   try {
     let data = req.body;
 
-    let {title, name,phone,email, password } = data;
+    let { title, name, phone, email, password } = data;
 
     if (Object.keys(data).length == 0) {
-        return res.status(400).send({ status: false, msg: "Please Enter Details" })
+      return res.status(400).send({ status: false, msg: "Please Enter Details" })
     }
 
-     //----------title validation---------------------------//
+    //----------title validation---------------------------//
 
-     if (!title) {return res.status(400).send({ status: false, msg: "Title must be required !" })}
+    if (!title) { return res.status(400).send({ status: false, msg: "Title must be required !" }) }
 
-     if (!/^Mr|Mrs|Miss+$/.test(title)) {return res.status(400).send({ status: false, msg: "Please Use Valid Title.like this: Mr/Mrs/Miss" })}
+    if (!/^Mr|Mrs|Miss+$/.test(title)) { return res.status(400).send({ status: false, msg: "Please Use Valid Title.like this: Mr/Mrs/Miss" }) }
 
     //------------name validation------------------------//
 
@@ -23,13 +23,13 @@ const createUser = async function (req, res) {
       return res.status(400).send({ status: false, msg: "name must be required !" })
     }
 
-    if (!/^[A-Z][a-z]{0,20}[A-Za-z]$/.test(name)) { return res.status(400).send({ status: false, msg: "name should start with Uppercase:- Name" }) }
+    if (!/^[A-Za-z]{1,35}/.test(name)) { return res.status(400).send({ status: false, msg: "name should start with Uppercase:- Name" }) }
     //------------mobile validation------------------------//
     let regphone = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
     if (!regphone.test(phone)) {
 
-        return res.status(400).send({ message: "Please enter valid Mobile Number" })
+      return res.status(400).send({ message: "Please enter valid Mobile Number" })
     }
 
     let phoneData = await userModel.findOne({ phone: phone })
@@ -37,7 +37,7 @@ const createUser = async function (req, res) {
     //Duplicate phone
 
     if (phoneData) return res.status(400).send({ status: false, msg: 'this mobile number is already exist' })
-    
+
     //------------email validation------------------------//
 
     if (!email) {
@@ -91,21 +91,17 @@ const loginUser = async function (req, res) {
     //--------------------------------token creation-------------------------------------------------------//
     let payload = {
       userId: user._id.toString(),
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60,
       group: "project3",
       organisation: "group39"
     }
 
-    let token = jwt.sign({payload}, "project3-secret-key", configGeneral.JWT,{ expiresIn: "1min"})
-
-    var decoded = jwt.decode(token, configGeneral.JWT);
-
-var d1 = new Date(decoded.exp);
-var d2 = new Date(decoded.iat);
-
+    let token = jwt.sign({ payload }, "project3-secret-key")
 
     res.setHeader("x-api-key", token)
 
-    res.status(201).send({ status: true, data: token, d1,d2 })
+    res.status(201).send({ status: true, data: token })
   }
   catch (error) {
     res.status(500).send({ status: false, msg: error.message })

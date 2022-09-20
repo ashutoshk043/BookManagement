@@ -17,7 +17,7 @@ const bookSchema = new mongoose.Schema({
     userId: {
         type: ObjectId,
         required: true,
-        refs: 'user'
+        ref: 'user'
     },
 
     ISBN: {
@@ -32,7 +32,6 @@ const bookSchema = new mongoose.Schema({
     },
 
     subcategory: {
-
         type: String,
         required: true
     },
@@ -41,24 +40,30 @@ const bookSchema = new mongoose.Schema({
         type: Number,
 
         default: {
-            type: Boolean, default: false
+            type: Boolean,
+            default: false
         },
         comment: {
             type: Number
         }
     },
 
-    deletedAt: { type: Date, default: null },
+    deletedAt: {
+        type: Date,
+        default: null
+    },
 
-    isDeleted: { type: Boolean, default: false },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
 
     releasedAt: {
         type: Date,
         required: true,
     },
-
-    timeStamps: true
-});
+},
+    { timeStamps: true });
 
 
 module.exports = mongoose.model('book', bookSchema)
