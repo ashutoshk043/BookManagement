@@ -38,15 +38,9 @@ const bookSchema = new mongoose.Schema({
 
     reviews: {
         type: Number,
-
-        default: {
-            type: Boolean,
-            default: false
-        },
-        comment: {
-            type: Number
-        }
-    },
+        default : 0
+        } ,   
+    
 
     deletedAt: {
         type: Date,
