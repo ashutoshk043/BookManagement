@@ -7,6 +7,8 @@ const commonMiddleware = require("../middleware/commonMiddleware")
 router.post("/register",userController.createUser)
 router.post("/login",userController.loginUser)
 
+router.post("/books/:bookId",userController.getBooksById)
+
 
 
 
