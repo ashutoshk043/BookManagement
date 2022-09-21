@@ -17,6 +17,9 @@ mongoose.connect("mongodb+srv://SudeepKumar874:cTbGUg6fWzq3zyfB@cluster0.ks18sd9
 
   app.use('/', routes);
 
+  app.use('/*', function(req, res){
+    res.status(400).send({status:false, message: "Please Enter Valid Path Or Parameters !!!!"})
+})
 
 app.listen(process.env.PORT || 3000, function () {
     console.log('Express app running on port ' + (process.env.PORT || 3000))
