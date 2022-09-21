@@ -24,7 +24,7 @@ const createBook = async function (req, res) {
 
         // if (!subategory) { return res.status(400).send({ status: false, msg: "subcategory must be required !" }) }
 
-        if (!releasedAt) { return res.status(400).send({ status: false, msg: "releasedAt must be required !" }) }
+        // if (!releasedAt) { return res.status(400).send({ status: false, msg: "releasedAt must be required !" }) }
 
         let savedata = await bookModel.create(data)
 
