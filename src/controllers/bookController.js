@@ -50,5 +50,62 @@ const createBook = async function (req, res) {
     }
 
 };
+const updateBook = async function (req, res) {
+    try {
+      let bookId = req.params.bookId;
 
-module.exports = { createBook };
+      let data = req.body;
+  
+      const { title, excerpt, releasedAt, ISBN } = data;
+  
+      let Id = await bookModel.findById({ _id: bookId });
+  
+      if (!Id) {
+        return res.status(404).send({ status: false, msg: "bookId does not exist" });
+      }
+
+      if(Id.isDeleted==true){
+        return res.status(404).send({ status: false, msg: "books does not exist" });
+      }
+
+
+console.log(Id)
+  
+      let dataBooks = await bookModel.findOneAndUpdate(
+        { _id: bookId, isDeleted: false },
+        {
+          $set: { title: title, excerpt: excerpt, releasedAt: releasedAt, ISBN:ISBN }},
+        { new: true }
+      );
+  console.log(dataBooks)
+      res.status(200).send({ status: true, msg: "Document Updated Successfully", data: dataBooks })
+    }
+    catch (error) {
+      res.status(500).send({ status: false, msg: error })
+    }
+  };
+
+
+const deletedBooks=async function(req,res){
+    try{
+      let bookIdData =req.params.bookId;
+      
+      let book=await bookModel.findById(bookIdData);
+
+
+      if(book.isDeleted===true){
+        return res.status(404).send({status:false, message:"No book exists"});
+
+      }
+   
+      let deletedBooks=await bookModel.findByIdAndUpdate({_id:bookIdData},
+      {isDeleted:true,deletedAt: new Date()},{new:true});
+
+      res.status(200).send({status:true,data:deletedBooks})
+      } catch(error){
+       res.status (500).send({status:false,error:error.message})
+      }
+
+};
+
+module.exports = { createBook ,updateBook , deletedBooks };
