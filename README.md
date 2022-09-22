@@ -55,24 +55,27 @@
   isDeleted: {boolean, default: false},
 }
 User APIs
+
 POST /register
 Create a user - atleast 5 users
 Create a user document from request body.
 Return HTTP status 201 on a succesful user creation. Also return the user document. The response should be a JSON object like this
 Return HTTP status 400 if no params or invalid params received in request body. The response should be a JSON object like this
+
+
 POST /login
 Allow an user to login with their email and password.
 On a successful login attempt return a JWT token contatining the userId, exp, iat. The response should be a JSON object like this
 If the credentials are incorrect return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
+
 Books API
-
 POST /books
-
 Create a book document from request body. Get userId in request body only.
 Make sure the userId is a valid userId by checking the user exist in the users collection.
 Return HTTP status 201 on a succesful book creation. Also return the book document. The response should be a JSON object like this
 Create atleast 10 books for each user
 Return HTTP status 400 for an invalid request with a response body like this
+
 
 GET /books
 Returns all books in the collection that aren't deleted. Return only book _id, title, excerpt, userId, category, releasedAt, reviews field. Response example here
@@ -110,6 +113,7 @@ If the book document doesn't exist then return an HTTP status of 404 with a body
 
 
 Review APIs
+
 POST /books/:bookId/review
 
 Add a review for the book in reviews collection.
@@ -124,6 +128,8 @@ Update the review - review, rating, reviewer's name.
 Check if the bookId exists and is not deleted before updating the review. Check if the review exist before updating the review. Send an error response with appropirate status code like this if the book does not exist
 Get review details like review, rating, reviewer's name in request body.
 Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like this
+
+
 DELETE /books/:bookId/review/:reviewId
 
 Check if the review exist with the reviewId. Check if the book exist with the bookId. Send an error response with appropirate status code like this if the book or book review does not exist

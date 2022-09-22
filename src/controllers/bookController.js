@@ -50,10 +50,34 @@ const createBook = async function (req, res) {
 
         let savedata = await bookModel.create(data)
 
-        res.status(201).send({ status: true, msg: savedata });
+        return res.status(201).send({ status: true, msg: savedata });
     }
     catch (error) {
-        res.status(500).send({ status: false, msg: error.message });
+        return res.status(500).send({ status: false, msg: error.message });
+    }
+
+};
+
+
+
+const deletedBooks = async function (req, res) {
+    try {
+        let bookIdData = req.params.bookId;
+
+        let book = await bookModel.findById(bookIdData);
+
+
+        if (book.isDeleted === true) {
+            return res.status(404).send({ status: false, message: "No book exists" });
+
+        }
+
+        let deletedBooks = await bookModel.findByIdAndUpdate({ _id: bookIdData },
+            { isDeleted: true, deletedAt: new Date() }, { new: true });
+
+        res.status(200).send({ status: true, data: deletedBooks })
+    } catch (error) {
+        res.status(500).send({ status: false, error: error.message })
     }
 
 };
@@ -65,9 +89,7 @@ const updateBook = async function (req, res) {
         let bookId = req.params.bookId;
 
         if (!mongoose.isValidObjectId(req.params.bookId)) {
-            return res
-              .status(400)
-              .send({ status: false, message: "Enter valid bookId" });
+            return res.status(400).send({ status: false, message: "Enter valid bookId" });
           }
 
         let data = req.body;
@@ -106,4 +128,4 @@ const updateBook = async function (req, res) {
     }
 };
 
-module.exports = { createBook, updateBook };
+module.exports = { createBook, updateBook, deletedBooks };
