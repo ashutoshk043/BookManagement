@@ -1,57 +1,54 @@
-const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken")
+const { default: mongoose } = require("mongoose")
+const bookModel = require("../Models/bookModel")
 
+//==========================================authentication=================================================================
 
-//Authentication Part
 const Authentication = async function (req, res, next) {
-  try {
-      let token = req.headers["x-api-key"]
-      if (!token) return res.status(400).send({ status: false, message: "Token required" })
+    try {
+        let token = req.headers["x-api-key"]
+        if (!token) return res.status(400).send({ status: false, message: "Token required" })
 
-      jwt.verify(token, "project3-secret-key", (error, decodedToken) => {
-          if (error) {
-              return res.status(401).send({ status: false, message: "token is invalid" });
+        // console.log(token)
 
-          }
-          req["decodedToken"] = decodedToken    //this line for we can access this token outside the middleware
+        jwt.verify(token, "project3-secret-key", (error, decodedToken) => {
+            if (error) {
+                return res.status(401).send({ status: false, message: "token is invalid" });
 
-          // console.log(decodedToken )
+            }
+            req["decodedToken"] = decodedToken    //this line for we can access this token outside the middleware
 
-          next()
+            // console.log(decodedToken )
 
-      });
+            next()
 
-  } catch (err) {
-      return res.status(500).send({ status: false, message: err.message });
-  }
+        });
+
+    } catch (err) {
+        return res.status(500).send({ status: false, message: err.message });
+    }
 }
 
 
+//========================================================Authorisation==============================================================
 
-const Authorization = async function (req, res, next) {
-  try {
-    let Token = req.headers["x-api-key"];
-    if(!Token)
-      return res.status(400).send({status:false, msg: "login is requred" });
-    
-    let tokenVerify = jwt.verify(Token, "project3-secret-key"); 
-    req.headers.userId = tokenVerify.userId ;
-
-    let checkuserId = await bookModel.findOne({_id:req.params.userId});
-    if(!checkuserId){
-      return res.status(403).send({status:false, msg: "userid is wrong"});
+const Authorisation = async function (req, res, next) {
+    try {
+        let bookId = req.params.bookId
+        if (!mongoose.Types.ObjectId.isValid(bookId)) {
+            return res.status(400).send({ status: false, message: "Please enter correct bookId" })
+        }
+        let userLoggedIn = req.decodedToken.userId
+        console.log(req.decodedToken.userId)
+        let bookData = await bookModel.findById(bookId)
+        if (bookData === null) return res.status(404).send({ status: false, message: "bookId does not exist" })
+        if (bookData.userId != userLoggedIn) {
+            return res.status(403).send({ status: false, message: "You are not authorised" })
+        }
+        next()
+    } catch (err) {
+        return res.status(500).send({ status: false, message: "Token Problem" })
     }
-    if(tokenVerify.userId !=checkbookId.userId){
-      return res.status(403).send({status:false, msg: "not authorised"});
-    }
+}
 
-   return next()
-  } catch (err) {
-    return res.status(500).send({status:false, msg: "Server Error 500" });
-  }
-};
-
-
-
-
-module.exports ={Authentication, Authorization}
+module.exports={Authentication,Authorisation}
