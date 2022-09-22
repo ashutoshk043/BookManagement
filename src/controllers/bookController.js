@@ -39,7 +39,7 @@ const createBook = async function (req, res) {
 
         if (!subcategory) { return res.status(400).send({ status: false, msg: "subcategory must be required !" }) }
 
-        // if (!releasedAt) { return res.status(400).send({ status: false, msg: "releasedAt must be required !" }) }
+        if (!releasedAt) { return res.status(400).send({ status: false, msg: "releasedAt must be required !" }) }
 
         let savedata = await bookModel.create(data)
 
@@ -51,4 +51,69 @@ const createBook = async function (req, res) {
 
 };
 
-module.exports = { createBook };
+
+
+const updateBook = async function (req, res) {
+    try {
+      let bookId = req.params.bookId;
+      
+      let Id = await bookModel.findById({ _id: bookId });
+  
+      if (!Id) {
+        return res.status(404).send({ status: false, msg: "bookId does not exist" });
+      }
+
+    //   if(!bookId){
+    //     return res.status(404).send({ status: false, msg: "use valid bookId " });
+    //   }
+
+      let data = req.body;
+  
+      const { title, excerpt, releasedAt, ISBN } = data;
+  
+      let checkTitle = await bookModel.findOne({title:title})
+      
+      if(checkTitle)
+      {
+        return res.status(400).send({ status: false, msg: "Title already exist...!! Use another Title" });
+      }
+      let checkIsbn = await bookModel.findOne({ISBN:ISBN})
+      
+      if(checkIsbn)
+      {
+        return res.status(400).send({ status: false, msg: "ISBN already exist....!! Use another ISBN" });
+      }
+      
+      
+      
+
+
+
+    //   if(Id.isDeleted==true){
+    //     return res.status(404).send({ status: false, msg: "books does not exist" });
+    //   }
+
+
+
+  
+      let dataBooks = await bookModel.findOneAndUpdate(
+        { _id: bookId, isDeleted: false },
+        {
+          $set: { title: title, excerpt: excerpt, releasedAt: releasedAt, ISBN:ISBN }},
+        { new: true }
+      );
+
+      if(!dataBooks){
+        return res.status(404).send({ status: false, msg: "bookId does not exist or deleted" });
+      }
+
+      res.status(200).send({ status: true, msg: "Document Updated Successfully", data: dataBooks })
+
+    }
+
+    catch (error) {
+      res.status(500).send({ status: false, msg: error })
+    }
+  };
+
+module.exports = { createBook, updateBook };

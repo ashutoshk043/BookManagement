@@ -83,12 +83,16 @@ By userId
 By category
 By subcategory example of a query url: books?filtername=filtervalue&f2=fv2
 Return all books sorted by book name in Alphabatical order
+
 GET /books/:bookId
+
 Returns a book with complete details including reviews. Reviews array would be in the form of Array. Response example here
 Return the HTTP status 200 if any documents are found. The response structure should be like this
 If the book has no reviews then the response body should include book detail as shown here and an empty array for reviewsData.
 If no documents are found then return an HTTP status 404 with a response like this
+
 PUT /books/:bookId
+
 Update a book by changing its
 title
 excerpt
@@ -98,30 +102,41 @@ Make sure the unique constraints are not violated when making the update
 Check if the bookId exists (must have isDeleted false and is present in collection). If it doesn't, return an HTTP status 404 with a response body like this
 Return an HTTP status 200 if updated successfully with a body like this
 Also make sure in the response you return the updated book document.
+
 DELETE /books/:bookId
+
 Check if the bookId exists and is not deleted. If it does, mark it deleted and return an HTTP status 200 with a response body with status and message.
 If the book document doesn't exist then return an HTTP status of 404 with a body like this
+
+
 Review APIs
 POST /books/:bookId/review
+
 Add a review for the book in reviews collection.
 Check if the bookId exists and is not deleted before adding the review. Send an error response with appropirate status code like this if the book does not exist
 Get review details like review, rating, reviewer's name in request body.
 Update the related book document by increasing its review count
 Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like this
+
 PUT /books/:bookId/review/:reviewId
+
 Update the review - review, rating, reviewer's name.
 Check if the bookId exists and is not deleted before updating the review. Check if the review exist before updating the review. Send an error response with appropirate status code like this if the book does not exist
 Get review details like review, rating, reviewer's name in request body.
 Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like this
 DELETE /books/:bookId/review/:reviewId
+
 Check if the review exist with the reviewId. Check if the book exist with the bookId. Send an error response with appropirate status code like this if the book or book review does not exist
 Delete the related reivew.
 Update the books document - decrease review count by one
+
 Authentication
 Make sure all the book routes are protected.
+
 Authorisation
 Make sure that only the owner of the books is able to create, edit or delete the book.
 In case of unauthorized access return an appropirate error message.
+
 Testing
 To test these apis create a new collection in Postman named Project 4 Books Management
 Each api should have a new request in this collection
