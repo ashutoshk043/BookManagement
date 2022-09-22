@@ -50,4 +50,8 @@ const Authorization = async function (req, res, next) {
     return res.status(500).send({status:false, msg: "Server Error 500" });
   }
 };
+
+
+
+
 module.exports ={Authentication, Authorization}

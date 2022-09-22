@@ -27,7 +27,7 @@ const createBook = async function (req, res) {
         if (!ISBN) { return res.status(400).send({ status: false, msg: "ISBN must be required !" }) }
 
         if (!(/[0-9]*[-| ][0-9]*[-| ][0-9]*[-| ][0-9]*[-| ][0-9]*/
-            ).test(ISBN)) { return res.status(400).send({ status: false, msg: " provide 13 digit ISBN number" }) }
+        ).test(ISBN)) { return res.status(400).send({ status: false, msg: " provide 13 digit ISBN number" }) }
 
         let ISBNVerify = await bookModel.findOne({ ISBN: ISBN })
 
@@ -39,73 +39,64 @@ const createBook = async function (req, res) {
 
         if (!subcategory) { return res.status(400).send({ status: false, msg: "subcategory must be required !" }) }
 
-         if (!releasedAt) { return res.status(400).send({ status: false, msg: "releasedAt must be required !" }) }
+        if (!releasedAt) { return res.status(400).send({ status: false, msg: "releasedAt must be required !" }) }
 
         let savedata = await bookModel.create(data)
 
-       return res.status(201).send({ status: true, msg: savedata });
+        return res.status(201).send({ status: true, msg: savedata });
     }
     catch (error) {
         return res.status(500).send({ status: false, msg: error.message });
     }
 
 };
-const updateBook = async function (req, res) {
+const updateBooks = async function (req, res) {
     try {
-      let bookId = req.params.bookId;
+        let bookId = req.params.bookId
 
-      let data = req.body;
-  
-      const { title, excerpt, releasedAt, ISBN } = data;
-  
-      let Id = await bookModel.findById({ _id: bookId });
-  
-      if (!Id) {
-        return res.status(404).send({ status: false, msg: "bookId does not exist" });
-      }
+        let findBook = await bookModel.findById(bookId)
+        if (findBook.isDeleted == true) return res.status(404).send({ status: false, msg: "requested book is already deleted" })
 
-      if(Id.isDeleted==true){
-        return res.status(404).send({ status: false, msg: "books does not exist" });
-      }
+        let details = req.body
+        if (Object.keys(details) == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
+
+        if (findBook.title == details.title) return res.status(404).send({ status: false, msg: "Title is already used" })
+        if (findBook.ISBN == details.ISBN) return res.status(404).send({ status: false, msg: "ISBN is already used" })
 
 
-console.log(Id)
-  
-      let dataBooks = await bookModel.findOneAndUpdate(
-        { _id: bookId, isDeleted: false },
-        {
-          $set: { title: title, excerpt: excerpt, releasedAt: releasedAt, ISBN:ISBN }},
-        { new: true }
-      );
-  console.log(dataBooks)
-      res.status(200).send({ status: true, msg: "Document Updated Successfully", data: dataBooks })
+        let updatedBook = await bookModel.findOneAndUpdate(
+            { _id: bookId },
+            { $set: { title: details.title, excerpt: details.excerpt, releasedAt: details.releasedAt, ISBN: details.ISBN } }, { new: true }
+        )
+
+        return res.status(201).send({ status: false, msg: updatedBook })
+    } catch (error) {
+        return res.status(500).send({ msg: error.message });
     }
-    catch (error) {
-      res.status(500).send({ status: false, msg: error })
+};
+
+
+const deletedBooks = async function (req, res) {
+    try {
+        let bookIdData = req.params.bookId;
+
+        let book = await bookModel.findById(bookIdData);
+
+
+        if (book.isDeleted === true) {
+            return res.status(404).send({ status: false, message: "No book exists" });
+
+        }
+
+        let deletedBooks = await bookModel.findByIdAndUpdate({ _id: bookIdData },
+            { isDeleted: true, deletedAt: new Date() }, { new: true });
+
+        res.status(200).send({ status: true, data: deletedBooks })
+    } catch (error) {
+        res.status(500).send({ status: false, error: error.message })
     }
-  };
-
-
-const deletedBooks=async function(req,res){
-    try{
-      let bookIdData =req.params.bookId;
-      
-      let book=await bookModel.findById(bookIdData);
-
-
-      if(book.isDeleted===true){
-        return res.status(404).send({status:false, message:"No book exists"});
-
-      }
-   
-      let deletedBooks=await bookModel.findByIdAndUpdate({_id:bookIdData},
-      {isDeleted:true,deletedAt: new Date()},{new:true});
-
-      res.status(200).send({status:true,data:deletedBooks})
-      } catch(error){
-       res.status (500).send({status:false,error:error.message})
-      }
 
 };
 
-module.exports = { createBook ,updateBook , deletedBooks };
+
+module.exports = { createBook, deletedBooks, updateBooks };
