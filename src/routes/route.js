@@ -14,7 +14,7 @@ router.post("/login",userController.loginUser)
 router.post("/books",bookController.createBook)
 
 // ------------GET BOOKS-----------------
-router.get("/books",getBookscontroller.getBooks)
+router.get("/books",getBookscontroller.getbooks)
 
 // -------------GET BOOKSBYID------------------------
 router.get("/books/:bookId",getBookscontroller.getBooksById)
