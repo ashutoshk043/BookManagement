@@ -4,18 +4,27 @@ const bookModel = require("../Models/bookModel");
 const reviewModel = require("../models/reviewModel")
 
 // --------------GET BOOKS--------------------
-let isValid = mongoose.Types.ObjectId.isValid;
 const getbooks = async function (req, res) {
     try {
         let queries = req.query;
-        if (!isValid(queries.userId)) {
-            return res.status(400).send({ status: false, msg: "!!!Invaild UserId!!!" })
+
+        let isValid = mongoose.Types.ObjectId.isValid(req.query.userId)
+
+        if (Object.keys(queries).length != 0) {
+            if (req.query.userId) {
+                if (!isValid) { return res.status(400).send({ status: false, message: "Not a valid User ID" }) }
+            }
         }
+
         let allBooks = await bookModel.find({ $and: [queries, { isDeleted: false }] }).select({
-            title: 1,excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1}).sort({ title: 1 });
+            title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1
+        }).sort({ title: 1 });
+
+        const sortedBooks = allBooks.sort((a, b) => a.title.localeCompare(b.title));
 
         if (allBooks.length == 0) return res.status(404).send({ status: false, msg: "No book found" });
-        return res.status(200).send({ status: true, data: allBooks });
+
+        return res.status(200).send({ status: true, data: sortedBooks });
     } catch (error) {
         res.status(500).send({ status: false, error: error.message });
     }
@@ -40,7 +49,7 @@ const getBooksById = async function (req, res) {
 
         let Book = {
             _id: book._id, title: book.title, excerpt: book.excerpt, userId: book.userId, category: book.category, subcategory: book.subcategory,
-            isDeleted: book.isDeleted, releasedAt: book.releasedAt, createdAt: book.createdAt, updatedAt:book.updatedAt, reviewsData: book.reviewsData
+            isDeleted: book.isDeleted, releasedAt: book.releasedAt, reviewsData: book.reviewsData
         }
         return res.status(200).send({ status: true, message: 'Books list', data: Book });
 

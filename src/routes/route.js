@@ -20,8 +20,4 @@ router.get("/books",getBookscontroller.getbooks)
 router.get("/books/:bookId",getBookscontroller.getBooksById)
 
 
-
-
-
-
 module.exports = router;
