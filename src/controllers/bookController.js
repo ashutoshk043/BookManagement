@@ -1,16 +1,23 @@
 // const userModel = require("../Models/userModel")
 const bookModel = require("../Models/bookModel");
 const moment = require('moment')
+const mongoose = require('mongoose')
+
 
 const createBook = async function (req, res) {
     try {
         let data = req.body;
 
-        let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = data;
-
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, msg: "Please Enter Details" })
         }
+
+        let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = data;
+        
+
+        if (!mongoose.isValidObjectId(req.body.userId)) {
+            return res.status(400).send({ status: false, message: "Enter valid userId" });
+          }
 
         if (!title) { return res.status(400).send({ status: false, msg: "Title must be required !" }) }
 
@@ -27,7 +34,7 @@ const createBook = async function (req, res) {
         if (!ISBN) { return res.status(400).send({ status: false, msg: "ISBN must be required !" }) }
 
         if (!(/[0-9]*[-| ][0-9]*[-| ][0-9]*[-| ][0-9]*[-| ][0-9]*/
-            ).test(ISBN)) { return res.status(400).send({ status: false, msg: " provide 13 digit ISBN number" }) }
+        ).test(ISBN)) { return res.status(400).send({ status: false, msg: " provide 13 digit ISBN number" }) }
 
         let ISBNVerify = await bookModel.findOne({ ISBN: ISBN })
 
@@ -55,65 +62,48 @@ const createBook = async function (req, res) {
 
 const updateBook = async function (req, res) {
     try {
-      let bookId = req.params.bookId;
-      
-      let Id = await bookModel.findById({ _id: bookId });
-  
-      if (!Id) {
-        return res.status(404).send({ status: false, msg: "bookId does not exist" });
-      }
+        let bookId = req.params.bookId;
 
-    //   if(!bookId){
-    //     return res.status(404).send({ status: false, msg: "use valid bookId " });
-    //   }
+        if (!mongoose.isValidObjectId(req.params.bookId)) {
+            return res
+              .status(400)
+              .send({ status: false, message: "Enter valid bookId" });
+          }
 
-      let data = req.body;
-  
-      const { title, excerpt, releasedAt, ISBN } = data;
-  
-      let checkTitle = await bookModel.findOne({title:title})
-      
-      if(checkTitle)
-      {
-        return res.status(400).send({ status: false, msg: "Title already exist...!! Use another Title" });
-      }
-      let checkIsbn = await bookModel.findOne({ISBN:ISBN})
-      
-      if(checkIsbn)
-      {
-        return res.status(400).send({ status: false, msg: "ISBN already exist....!! Use another ISBN" });
-      }
-      
-      
-      
+        let data = req.body;
 
+        const { title, excerpt, releasedAt, ISBN } = data;
 
+        let checkTitle = await bookModel.findOne({title})
 
-    //   if(Id.isDeleted==true){
-    //     return res.status(404).send({ status: false, msg: "books does not exist" });
-    //   }
+        if (checkTitle) {
+            return res.status(400).send({ status: false, msg: "Title already exist...!! Use another Title" });
+        }
+        let checkIsbn = await bookModel.findOne({ ISBN })
 
+        if (checkIsbn) {
+            return res.status(400).send({ status: false, msg: "ISBN already exist....!! Use another ISBN" });
+        }
 
+        let dataBooks = await bookModel.findOneAndUpdate(
+            { _id: bookId, isDeleted: false },
+            {
+                $set: { title: title, excerpt: excerpt, releasedAt: releasedAt, ISBN: ISBN }
+            },
+            { new: true }
+        );
 
-  
-      let dataBooks = await bookModel.findOneAndUpdate(
-        { _id: bookId, isDeleted: false },
-        {
-          $set: { title: title, excerpt: excerpt, releasedAt: releasedAt, ISBN:ISBN }},
-        { new: true }
-      );
+        if (!dataBooks) {
+            return res.status(404).send({ status: false, msg: "bookId does not exist or deleted" });
+        }
 
-      if(!dataBooks){
-        return res.status(404).send({ status: false, msg: "bookId does not exist or deleted" });
-      }
-
-      res.status(200).send({ status: true, msg: "Document Updated Successfully", data: dataBooks })
+        res.status(200).send({ status: true, msg: "Document Updated Successfully", data: dataBooks })
 
     }
 
     catch (error) {
-      res.status(500).send({ status: false, msg: error })
+        res.status(500).send({ status: false, msg: error })
     }
-  };
+};
 
 module.exports = { createBook, updateBook };
