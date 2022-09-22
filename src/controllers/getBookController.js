@@ -18,7 +18,7 @@ const getbooks = async function (req, res) {
 
         let allBooks = await bookModel.find({ $and: [queries, { isDeleted: false }] }).select({
             title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1
-        }).sort({ title: 1 });
+        })
 
         const sortedBooks = allBooks.sort((a, b) => a.title.localeCompare(b.title));
 

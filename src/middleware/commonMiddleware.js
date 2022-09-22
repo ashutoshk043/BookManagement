@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const bookModel = require("../Models/bookModel");
 
 
 //Authentication Part
@@ -31,23 +32,17 @@ const Authentication = async function (req, res, next) {
 const Authorization = async function (req, res, next) {
   try {
     let Token = req.headers["x-api-key"];
-    if(!Token)
-      return res.status(400).send({status:false, msg: "login is requred" });
-    
     let tokenVerify = jwt.verify(Token, "project3-secret-key"); 
-    req.headers.userId = tokenVerify.userId ;
-
-    let checkuserId = await bookModel.findOne({_id:req.params.userId});
-    if(!checkuserId){
-      return res.status(403).send({status:false, msg: "userid is wrong"});
-    }
-    if(tokenVerify.userId !=checkbookId.userId){
-      return res.status(403).send({status:false, msg: "not authorised"});
+    let rUid = req.body.userId
+    let vUid = tokenVerify.payload.userId
+    if(rUid != vUid){
+      return res.status(400).send({status:false, message: "You are not authorised for this task...."})
     }
 
    return next()
+   
   } catch (err) {
-    return res.status(500).send({status:false, msg: "Server Error 500" });
+    return res.status(500).send({status:false, msg: err.message });
   }
 };
 module.exports ={Authentication, Authorization}
