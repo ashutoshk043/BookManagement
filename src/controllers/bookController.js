@@ -39,14 +39,14 @@ const createBook = async function (req, res) {
 
         if (!subcategory) { return res.status(400).send({ status: false, msg: "subcategory must be required !" }) }
 
-        // if (!releasedAt) { return res.status(400).send({ status: false, msg: "releasedAt must be required !" }) }
+         if (!releasedAt) { return res.status(400).send({ status: false, msg: "releasedAt must be required !" }) }
 
         let savedata = await bookModel.create(data)
 
-        res.status(201).send({ status: true, msg: savedata });
+       return res.status(201).send({ status: true, msg: savedata });
     }
     catch (error) {
-        res.status(500).send({ status: false, msg: error.message });
+        return res.status(500).send({ status: false, msg: error.message });
     }
 
 };
