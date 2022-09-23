@@ -78,30 +78,30 @@ const createUser = async function (req, res) {
 //=========================================loginAuthor=================================================//
 
 
-  const login = async (req, res) => {
-    try {
-  
-      let emailId = req.body.email
-      let Password = req.body.password
-  
-      let userLogin = await userModel.findOne({ email: emailId, password: Password })
-      if (!userLogin)
-        return res.status(401).send({ status: false, msg: "invalid login details" })
-  
-  
-      //-------------------------------😎token generation😎--------------------------------------------------------------------------------------------
-      const newtoken = jwt.sign(
-        {
-          userId: userLogin._id,
-          group: "39", iat: Math.floor(Date.now() / 1000) - 30
-        }, "project3-secret-key",
-        { expiresIn: "24h" });
-  
-      return res.status(200).send({ status: true, msg: "login succesfully", token: newtoken });
-    } catch (err) {
-      return res.status(500).send({ status: false, error: err.message });
-    }
+const login = async (req, res) => {
+  try {
+
+    let emailId = req.body.email
+    let Password = req.body.password
+
+    let userLogin = await userModel.findOne({ email: emailId, password: Password })
+    if (!userLogin)
+      return res.status(401).send({ status: false, msg: "invalid login details" })
+
+
+    //-------------------------------😎token generation😎--------------------------------------------------------------------------------------------
+    const newtoken = jwt.sign(
+      {
+        userId: userLogin._id,
+        group: "39", iat: Math.floor(Date.now() / 1000) - 30
+      }, "project3-secret-key",
+      { expiresIn: "24h" });
+
+    return res.status(200).send({ status: true, msg: "login succesfully", token: newtoken });
+  } catch (err) {
+    return res.status(500).send({ status: false, error: err.message });
   }
-  
+}
+
 module.exports = { createUser, login };
 
