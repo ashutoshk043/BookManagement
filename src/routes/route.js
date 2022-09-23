@@ -4,6 +4,7 @@ const userController= require("../controllers/userController")
 const bookController = require("../controllers/bookController")
 const commonMiddleware = require("../middleware/commonMiddleware")
 const getBookscontroller = require("../controllers/getBookController")
+const reviewController = require('../controllers/reviewController')
 // ------------POST REGISTER-----------------
 router.post("/register",userController.createUser)
 
@@ -24,6 +25,9 @@ router.put("/books/:bookId"  ,commonMiddleware.Authentication, commonMiddleware.
 
 // -------------DELETE------------------
 router.delete("/books/:bookId" ,commonMiddleware.Authentication, commonMiddleware.Authorisation  ,bookController.deletedBooks)
+
+//----------Post book review---------------------
+router.post('/books/:bookId/review',reviewController.createReview)
 
 
 module.exports = router;

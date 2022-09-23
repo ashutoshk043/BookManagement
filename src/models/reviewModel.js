@@ -3,30 +3,36 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 
 const reviewSchema = new mongoose.Schema({
 
+    //     bookId: {ObjectId, mandatory, refs to book model},
     bookId: {
         type: ObjectId,
         require: true,
-        ref: 'Book'
+        ref: 'book'
     },
+    //     reviewedBy: {string, mandatory, default 'Guest', value: reviewer's name},
     reviewedBy: {
         type: String,
         require: true,
         default: 'Guest',
-        value: {
-            type: String  // I have doubt in this isko confirm krna
-        }
+
     },
+    //     reviewedAt: {Date, mandatory},
     reviewedAt: {
         type: Date,
         require: true
     },
+    //     rating: {number, min 1, max 5, mandatory},
     rating: {
         type: Number,
-        require: true
+        require: true,
+        min : 1,
+        max: 5
     },
+    //     review: {string, optional}
     review: {
         type: String
     },
+    //     isDeleted: {boolean, default: false},
     isDeleted: {
         type: Boolean,
         default: false
@@ -34,3 +40,4 @@ const reviewSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 module.exports = mongoose.model('review', reviewSchema)
+
