@@ -66,7 +66,7 @@ const updateBook = async function (req, res) {
         if (findBook.isDeleted == true) return res.status(404).send({ status: false, msg: "requested book is already deleted" })
 
         let details = req.body
-        if (Object.keys(details) == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
+        if (Object.keys(details).length == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
 
         if (findBook.title == details.title) return res.status(404).send({ status: false, msg: "Title is already used" })
         if (findBook.ISBN == details.ISBN) return res.status(404).send({ status: false, msg: "ISBN is already used" })
