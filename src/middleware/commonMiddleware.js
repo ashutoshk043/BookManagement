@@ -39,7 +39,7 @@ const Authorisation = async function (req, res, next) {
             return res.status(400).send({ status: false, message: "Please enter correct bookId" })
         }
         let userLoggedIn = req.decodedToken.userId
-        console.log(req.decodedToken.userId)
+        // console.log(req.decodedToken.userId)
         let bookData = await bookModel.findById(bookId)
         if (bookData === null) return res.status(404).send({ status: false, message: "bookId does not exist" })
         if (bookData.userId != userLoggedIn) {

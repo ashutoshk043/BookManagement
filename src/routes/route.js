@@ -27,7 +27,12 @@ router.put("/books/:bookId"  ,commonMiddleware.Authentication, commonMiddleware.
 router.delete("/books/:bookId" ,commonMiddleware.Authentication, commonMiddleware.Authorisation  ,bookController.deletedBooks)
 
 //----------Post book review---------------------
-router.post('/books/:bookId/review',reviewController.createReview)
+router.post('/books/:bookId/review', reviewController.createReview)
+
+// ---------------POST REVIEW-------------------
+router.put("/books/:bookId/review/:reviewId" , reviewController.updateReview)
+
+router.put("/books/:bookId/review/:reviewId" , reviewController.deleteReview)
 
 
 module.exports = router;

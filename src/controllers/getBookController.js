@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const userModel = require("../Models/userModel");
+// const userModel = require("../Models/userModel");
 const bookModel = require("../Models/bookModel");
 const reviewModel = require("../Models/reviewModel")
 
@@ -53,7 +53,8 @@ const getBooksById = async function (req, res) {
         }
         return res.status(200).send({ status: true, message: 'Books list', data: Book });
 
-    } catch (err) {
+    }
+     catch (err) {
         res.status(500).send({ status: false, message: err.message });
     }
 }
