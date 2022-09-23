@@ -1,22 +1,13 @@
 // const userModel = require("../Models/userModel")
 const bookModel = require("../Models/bookModel");
-<<<<<<< HEAD
-=======
 const moment = require('moment')
 const mongoose = require('mongoose')
->>>>>>> 705b4919ce95b8b88a05f0eb17de6933be6c1a8d
 
 
 const createBook = async function (req, res) {
     try {
         let data = req.body;
 
-<<<<<<< HEAD
-        let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = data;
-        
-
-=======
->>>>>>> 705b4919ce95b8b88a05f0eb17de6933be6c1a8d
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, msg: "Please Enter Details" })
         }

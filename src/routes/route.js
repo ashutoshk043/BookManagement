@@ -20,7 +20,7 @@ router.get("/books",getBookscontroller.getbooks)
 router.get("/books/:bookId",getBookscontroller.getBooksById)
 
 // -------------UPDATE-------------------
-router.put("/books/:bookId" ,  bookController.updateBooks)
+router.put("/books/:bookId" ,  bookController.createBook)
 
 // -------------DELETE------------------
 router.delete("/books/:bookId" , bookController.deletedBooks)
