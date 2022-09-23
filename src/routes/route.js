@@ -29,5 +29,8 @@ router.delete("/books/:bookId" ,commonMiddleware.Authentication, commonMiddlewar
 //----------Post book review---------------------
 router.post('/books/:bookId/review', reviewController.createReview)
 
+// ---------------POST REVIEW-------------------
+router.put("/books/:bookId/review/:reviewId" , reviewController.updateReview)
+
 
 module.exports = router;
