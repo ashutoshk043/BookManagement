@@ -55,10 +55,7 @@ const createBook = async function (req, res) {
     catch (error) {
         return res.status(500).send({ status: false, msg: error.message });
     }
-
 };
-
-
 
 const deletedBooks = async function (req, res) {
     try {
@@ -75,7 +72,7 @@ const deletedBooks = async function (req, res) {
         let deletedBooks = await bookModel.findByIdAndUpdate({ _id: bookIdData },
             { isDeleted: true, deletedAt: new Date() }, { new: true });
 
-        res.status(200).send({ status: true, data: deletedBooks })
+        res.status(200).send({ status: true, msg : "book has been deleted" })
     } catch (error) {
         res.status(500).send({ status: false, error: error.message })
     }
@@ -84,48 +81,30 @@ const deletedBooks = async function (req, res) {
 
 
 
-const updateBook = async function (req, res) {
+const updateBook =  async function (req, res) {
     try {
-        let bookId = req.params.bookId;
+        let bookId = req.params.bookId
 
-        if (!mongoose.isValidObjectId(req.params.bookId)) {
-            return res.status(400).send({ status: false, message: "Enter valid bookId" });
-          }
+        let findBook = await bookModel.findById(bookId)
+        if (findBook.isDeleted == true) return res.status(404).send({ status: false, msg: "requested book is already deleted" })       
+        
+        let details = req.body
+        if (Object.keys(details) == 0) return res.status(400).send({ status: false, msg: "Please provide details" })
 
-        let data = req.body;
+        if (findBook.title == details.title) return res.status(404).send({ status: false, msg: "Title is already used" })
+        if (findBook.ISBN == details.ISBN) return res.status(404).send({ status: false, msg: "ISBN is already used" })
 
-        const { title, excerpt, releasedAt, ISBN } = data;
 
-        let checkTitle = await bookModel.findOne({title})
 
-        if (checkTitle) {
-            return res.status(400).send({ status: false, msg: "Title already exist...!! Use another Title" });
-        }
-        let checkIsbn = await bookModel.findOne({ ISBN })
+        let updatedBooks = await bookModel.findOneAndUpdate(
+            { _id: bookId },
+            { $set: {title: details.title, excerpt:details.excerpt, releasedAt: details.releasedAt, ISBN: details.ISBN }} , { new: true }
+        )
 
-        if (checkIsbn) {
-            return res.status(400).send({ status: false, msg: "ISBN already exist....!! Use another ISBN" });
-        }
-
-        let dataBooks = await bookModel.findOneAndUpdate(
-            { _id: bookId, isDeleted: false },
-            {
-                $set: { title: title, excerpt: excerpt, releasedAt: releasedAt, ISBN: ISBN }
-            },
-            { new: true }
-        );
-
-        if (!dataBooks) {
-            return res.status(404).send({ status: false, msg: "bookId does not exist or deleted" });
-        }
-
-        res.status(200).send({ status: true, msg: "Document Updated Successfully", data: dataBooks })
-
-    }
-
-    catch (error) {
-        res.status(500).send({ status: false, msg: error })
-    }
-};
+        return res.status(201).send({ status: true, msg: "data is updated" , data : updatedBooks})
+    } catch (error) {
+        return res.status(500).send({ msg: error.message });
+      }
+}
 
 module.exports = { createBook, updateBook, deletedBooks };

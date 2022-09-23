@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const userModel = require("../Models/userModel");
 const bookModel = require("../Models/bookModel");
-const reviewModel = require("../models/reviewModel")
+const reviewModel = require("../Models/reviewModel")
 
 // --------------GET BOOKS--------------------
 const getbooks = async function (req, res) {

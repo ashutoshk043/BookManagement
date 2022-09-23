@@ -8,22 +8,22 @@ const getBookscontroller = require("../controllers/getBookController")
 router.post("/register",userController.createUser)
 
 // ---------------POST LOGIN------------------
-router.post("/login",userController.loginUser)
+router.post("/login",userController.login)
 
 // --------------POST BOOKS-------------------
-router.post("/books",commonMiddleware.Authentication,commonMiddleware.Authorization,bookController.createBook)
+router.post("/books",commonMiddleware.Authentication ,bookController.createBook)
 
 // ------------GET BOOKS-----------------
-router.get("/books",getBookscontroller.getbooks)
+router.get("/books",commonMiddleware.Authentication, getBookscontroller.getbooks)
 
 // -------------GET BOOKSBYID------------------------
-router.get("/books/:bookId",getBookscontroller.getBooksById)
+router.get("/books/:bookId", commonMiddleware.Authentication, getBookscontroller.getBooksById)
 
 // -------------UPDATE-------------------
-router.put("/books/:bookId" ,  bookController.createBook)
+router.put("/books/:bookId"  ,commonMiddleware.Authentication, commonMiddleware.Authorisation, bookController.updateBook)
 
 // -------------DELETE------------------
-router.delete("/books/:bookId" , bookController.deletedBooks)
+router.delete("/books/:bookId" ,commonMiddleware.Authentication, commonMiddleware.Authorisation  ,bookController.deletedBooks)
 
 
 module.exports = router;
