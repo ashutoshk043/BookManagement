@@ -1,6 +1,6 @@
 // const userModel = require("../Models/userModel")
 const bookModel = require("../Models/bookModel");
-const moment = require('moment')
+// const moment = require('moment')
 const mongoose = require('mongoose')
 
 
@@ -83,6 +83,7 @@ const updateBook = async function (req, res) {
         return res.status(500).send({ msg: error.message });
     }
 }
+//--------------------------------------------------------DELETEBOOKS---------------------------------//
 
 const deletedBooks = async function (req, res) {
     try {
@@ -103,6 +104,8 @@ const deletedBooks = async function (req, res) {
     } catch (error) {
         res.status(500).send({ status: false, error: error.message })
     }
-
 };
+
+
+
 module.exports = { createBook, updateBook, deletedBooks };

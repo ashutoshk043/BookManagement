@@ -32,5 +32,7 @@ router.post('/books/:bookId/review', reviewController.createReview)
 // ---------------POST REVIEW-------------------
 router.put("/books/:bookId/review/:reviewId" , reviewController.updateReview)
 
+router.put("/books/:bookId/review/:reviewId" , reviewController.deleteReview)
+
 
 module.exports = router;
