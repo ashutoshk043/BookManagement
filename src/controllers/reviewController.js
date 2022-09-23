@@ -26,6 +26,7 @@ const createReview = async (req, res) => {
 const updateReview = async function (req, res) {
     try {
         let bookId = req.params.bookId;
+
         if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).send({ status: false, msg: "bookId is not valid" })
 
         let reviewId = req.params.reviewId
@@ -34,10 +35,12 @@ const updateReview = async function (req, res) {
         let reviewData = req.body
         let { review, rating, reviewedBy } = reviewData
 
-        //-----check for request body-----
+        //check for request body
+
         if (Object.keys(reviewData).length == 0) return res.status(404).send({ status: false, msg: "please add some data for updates!!!" })
 
-        //----check if book exist in collection or not------
+        //check if book exist in collection or not
+
         const book = await bookModel.findById(bookId)
 
         if (!book) return res.status(404).send({ status: false, msg: "No Book with this bookId was found in the reviewModel" })
@@ -95,7 +98,7 @@ const deleteReview = async function (req, res) {
 
 
         let deletReview = await reviewModel.findOneAndUpdate({ _id:reviewId, bookId: bookId, isDeleted:false },
-            
+
              { $set: { isDeleted: true, deletedAt: new Date(), reviews:bookData.reviews-1 } },{ new: true })
 
         if (!deletReview) { return res.status(404).send({ status: false, message: "Review not Exist!" }) }
