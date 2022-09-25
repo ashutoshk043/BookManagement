@@ -129,9 +129,9 @@ const deletedBooks = async function (req, res) {
         let deletedBooks = await bookModel.findByIdAndUpdate({ _id: bookIdData },
             { isDeleted: true, deletedAt: new Date() }, { new: true });
 
-        res.status(200).send({ status: true, msg: "book has been deleted" })
+        res.status(200).send({ status: true, message: "book has been deleted" })
     } catch (error) {
-        res.status(500).send({ status: false, error: error.message })
+        res.status(500).send({ status: false, message: error.message })
     }
 };
 

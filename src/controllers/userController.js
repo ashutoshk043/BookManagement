@@ -74,7 +74,7 @@ const createUser = async function (req, res) {
 
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@])[A-Za-z\d@]{8,15}$/.test(password)) {
 
-      return res.status(400).send({ status: false, msg: "password contain at least 8 chracter or less than 16 character" })
+      return res.status(400).send({ status: false, msg: "password contain at least 8 chracter or less than 16 character & 1 uppercase or 1 specical symbol like @ is mandatory" })
     }
 
     if (data.hasOwnProperty('address')) {
@@ -129,12 +129,12 @@ const login = async (req, res) => {
 
     res.setHeader('x-api-key', token);
 
-    return res.status(200).send({ status: true, msg: "login succesfully", token: token });
+    return res.status(200).send({ status: true, message: "login succesfully", token: token });
 
   } catch (err) {
-    return res.status(500).send({ status: false, error: err.message });
+    return res.status(500).send({ status: false, message: err.message });
   }
 }
 
-module.exports = { createUser, login };
+module.exports = { createUser,login };
 

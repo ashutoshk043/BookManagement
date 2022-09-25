@@ -19,10 +19,10 @@ const createReview = async (req, res) => {
         const { reviewedBy, rating, reviewedAt, review } = req.body;
 
         if (Object.keys(req.body).length == 0) {
-            return res.status(400).send({ status: false, msg: "Please Enter Details" })
+            return res.status(400).send({ status: false, message: "Please Enter Details" })
         }
 
-        if (!reviewedBy) { return res.status(400).send({ status: false, msg: "reviewedBy must be required !" }) }
+        if (!reviewedBy) { return res.status(400).send({ status: false, message: "reviewedBy must be required !" }) }
 
 
         if (!mongoose.Types.ObjectId.isValid(rBookId)) {
@@ -36,14 +36,14 @@ const createReview = async (req, res) => {
         if (!isValids(rating) || !isValids(review)) {
             return res.status(400).send({ status: false, message: "Blanks fields are not allowed..." });
         }
-        if (!rating) { return res.status(400).send({ status: false, msg: "rating must be required !" }) }
+        if (!rating) { return res.status(400).send({ status: false, message: "rating must be required !" }) }
 
         if (!valRating.test(rating)) {
             return res.status(400).send({ status: false, message: "Please rate between 1 to 5 Only" });
         }
 
 
-        if (!reviewedAt) { return res.status(400).send({ status: false, msg: "reviewedAt must be required !" }) }
+        if (!reviewedAt) { return res.status(400).send({ status: false, message: "reviewedAt must be required !" }) }
 
         if (!(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/).test(reviewedAt)) {
 
@@ -73,7 +73,7 @@ const createReview = async (req, res) => {
             { new: true }
         );
 
-        res.status(201).send({ status: true, message: "success", data: ReviewBooks });
+        res.status(201).send({ status: true, message: "success", data: ReviewBooks});
     } catch (error) {
         res.status(500).send({ status: false, message: error.message })
     }
