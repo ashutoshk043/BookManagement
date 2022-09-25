@@ -1,6 +1,17 @@
 const userModel = require("../Models/userModel");
 const jwt = require("jsonwebtoken");
 
+
+const isValidObjectType = (value) => {
+  if (typeof value === 'object' && Object.keys(value).length > 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+//--------------------------------------------CreateUser--------------------------------------------------//
+
 const createUser = async function (req, res) {
   try {
     let data = req.body;
@@ -36,7 +47,7 @@ const createUser = async function (req, res) {
 
     //Duplicate phone
 
-    if (phoneData) return res.status(400).send({ status: false, msg: 'this mobile number is already exist' })
+    if (phoneData) return res.status(409).send({ status: false, msg: 'this mobile number is already exist' })
 
     //------------email validation------------------------//
 
@@ -44,7 +55,7 @@ const createUser = async function (req, res) {
       return res.status(400).send({ status: false, msg: "Email should be mandatory" })
     }
 
-    if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)) {
+    if (!/^[a-z0-9._+~!@#$%^&:;"',<.>?/}{*()]+@[a-z-]+\.[a-z-.]+$/.test(email)) {
 
       return res.status(400).send({ status: false, msg: "please provide valid email" })
     }
@@ -52,7 +63,7 @@ const createUser = async function (req, res) {
     let emailVerify = await userModel.findOne({ email: email })
 
     if (emailVerify) {
-      return res.status(400).send({ status: false, msg: "this email already exists please provide another email" })
+      return res.status(409).send({ status: false, msg: "this email already exists please provide another email" })
     }
 
     //------------password validation------------------------//
@@ -66,9 +77,26 @@ const createUser = async function (req, res) {
       return res.status(400).send({ status: false, msg: "password contain at least 8 chracter or less than 16 character" })
     }
 
+    if (data.hasOwnProperty('address')) {
+      if (isValidObjectType(data.address)) return res.status(400).send({ status: false, message: "Enter address in a object with 'street','city' and 'pincode' as keys" })
+    }
+
     let savedata = await userModel.create(data)
 
-    res.status(201).send({ status: true, msg: savedata });
+    let responseData = {
+      _id: savedata._id,
+      title: savedata.title,
+      name: savedata.name,
+      phone: savedata.phone,
+      email: savedata.email,
+      password: savedata.password,
+      address: savedata.address,
+      createdAt: savedata.createdAt,
+      updatedAt: savedata.updatedAt
+    }
+
+
+    res.status(201).send({ status: true, message: 'Success', data: responseData });
   }
   catch (error) {
     res.status(500).send({ status: false, msg: error.message });
@@ -90,14 +118,19 @@ const login = async (req, res) => {
 
 
     //-------------------------------😎token generation😎----------------------------------------------
-    const newtoken = jwt.sign(
+    const token = jwt.sign(
       {
         userId: userLogin._id,
         group: "39", iat: Math.floor(Date.now() / 1000) - 30
       }, "project3-secret-key",
       { expiresIn: "24h" });
 
-    return res.status(200).send({ status: true, msg: "login succesfully", token: newtoken });
+    //set token to the header
+
+    res.setHeader('x-api-key', token);
+
+    return res.status(200).send({ status: true, msg: "login succesfully", token: token });
+
   } catch (err) {
     return res.status(500).send({ status: false, error: err.message });
   }

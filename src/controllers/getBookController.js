@@ -4,33 +4,43 @@ const bookModel = require("../Models/bookModel");
 const reviewModel = require("../Models/reviewModel")
 
 // --------------GET BOOKS--------------------
-const getbooks = async function (req, res) {
+const getBooks = async function (req, res) {
     try {
-        let queries = req.query;
-
-        let isValid = mongoose.Types.ObjectId.isValid(req.query.userId)
-
-        if (Object.keys(queries).length != 0) {
-            if (req.query.userId) {
-                if (!isValid) { return res.status(400).send({ status: false, message: "Not a valid User ID" }) }
-            }
+      let data = req.query;
+  
+  
+      if (req.query.userId) {
+        if (!mongoose.isValidObjectId(req.query.userId)) {
+          return res
+            .status(400)
+            .send({ status: false, message: "Enter valid userId" });
         }
-
-        let allBooks = await bookModel.find({ $and: [queries, { isDeleted: false }] }).select({
-            title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1
-        })
-
-        const sortedBooks = allBooks.sort((a, b) => a.title.localeCompare(b.title));
-
-        if (allBooks.length == 0) return res.status(404).send({ status: false, msg: "No book found" });
-
-        return res.status(200).send({ status: true, data: sortedBooks });
+      }
+  
+      let obj = { isDeleted: false, ...data };
+  
+      let books = await bookModel
+        .find(obj)
+        .select("_id title excerpt userId category releasedAt reviews");
+  
+      if (books.length == 0) {
+        return res.status(404).send({ status: false, message: "No Book Found" });
+      }
+  
+      let booksData = books.sort(function (a, b) {
+        // return a.title - b.title;
+        return a.title.localeCompare(b.title);
+      });
+  
+      return res
+        .status(200)
+        .send({ status: true, message: "Book List", data: booksData });
     } catch (error) {
-        res.status(500).send({ status: false, error: error.message });
+      return res.status(500).send({ status: false, message: error });
     }
-}
+  };
 
-// -----------------------GET BOOKS BY ID-------------------------
+// -----------------------GET BOOKS BY ID------------------------- //
 
 const getBooksById = async function (req, res) {
     try {
@@ -42,22 +52,23 @@ const getBooksById = async function (req, res) {
 
         if (!book) return res.status(404).send({ status: false, message: "No book found from this bookId" })
 
-        const reviewsData = await reviewModel.find({ bookId: book._id })
+        const reviewsData = await reviewModel.find({ bookId: book._id }).select('_Id bookId reviewedBy reviewedAt rating review')
+
         if (!reviewsData) return res.status(404).send({ status: false, message: "No book found from this bookId" })
 
         book.reviewsData = reviewsData
 
         let Book = {
             _id: book._id, title: book.title, excerpt: book.excerpt, userId: book.userId, category: book.category, subcategory: book.subcategory,
-            isDeleted: book.isDeleted, releasedAt: book.releasedAt, reviewsData: book.reviewsData
+            isDeleted: book.isDeleted, reviews: book.reviews, releasedAt: book.releasedAt,createdAt: book.createdAt, updatedAt: book.updatedAt, reviewsData: book.reviewsData
         }
         return res.status(200).send({ status: true, message: 'Books list', data: Book });
 
     }
-     catch (err) {
+    catch (err) {
         res.status(500).send({ status: false, message: err.message });
     }
 }
 
 
-module.exports = { getbooks, getBooksById }
+module.exports = { getBooks, getBooksById }
