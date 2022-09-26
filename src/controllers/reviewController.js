@@ -22,14 +22,9 @@ const createReview = async (req, res) => {
       return res.status(400).send({ status: false, message: "Please Enter Details" })
     }
 
-    if (!reviewedBy) { return res.status(400).send({ status: false, message: "reviewedBy must be required !" }) }
-
 
     if (!mongoose.Types.ObjectId.isValid(rBookId)) {
       return res.status(400).send({ status: false, message: "Invalid BookId in path params..." });
-    }
-    if (!mongoose.isValidObjectId(req.body.bookId)) {
-      return res.status(400).send({ status: false, message: "Enter valid bookId in req.body" });
     }
 
 
@@ -142,11 +137,6 @@ const updateReview = async function (req, res) {
         .status(404)
         .send({ status: false, message: "Review not exist" });
     }
-
-    // let bookDetails = bookData.toObject();
-
-    // let reviewData = updatedReview.toObject();
-
     let responseData = { bookData, updatedReview};
 
     return res
