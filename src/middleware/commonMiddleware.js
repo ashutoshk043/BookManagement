@@ -3,7 +3,7 @@ const { default: mongoose } = require("mongoose")
 const bookModel = require("../Models/bookModel")
 
 
-//Authentication Part
+//----------------------Authentication Part-----------------
 const Authentication = async function (req, res, next) {
     try {
         let token = req.headers["x-api-key"]
@@ -30,7 +30,7 @@ const Authentication = async function (req, res, next) {
 }
 
 
-//========================================================Authorisation==============================================================
+//================================Authorisation==============================
 
 const Authorisation = async function (req, res, next) {
     try {

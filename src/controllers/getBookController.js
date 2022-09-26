@@ -48,7 +48,8 @@ const getBooksById = async function (req, res) {
 
         if (!mongoose.Types.ObjectId.isValid(bookId)) { return res.status(400).send({ status: false, msg: "bookId is not valid" }) }
 
-        const book = await bookModel.findById(bookId)
+        const book = await bookModel.findOne({ _id : bookId , isDeleted : false})
+    
 
         if (!book) return res.status(404).send({ status: false, message: "No book found from this bookId" })
 

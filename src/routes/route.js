@@ -38,10 +38,11 @@ router.delete("/books/:bookId" ,commonMiddleware.Authentication, commonMiddlewar
 
 router.post('/books/:bookId/review', reviewController.createReview)
 
-// ---------------POST REVIEW-------------------------
+// ---------------UPDATE REVIEW-------------------------
 
 router.put("/books/:bookId/review/:reviewId" , reviewController.updateReview)
 
+//----------------DELETE REVIEW---------------------------
 router.delete("/books/:bookId/review/:reviewId" , reviewController.deleteReview)
 
 
