@@ -137,6 +137,11 @@ const updateReview = async function (req, res) {
         .status(404)
         .send({ status: false, message: "Review not exist" });
     }
+
+    // let bookDetails = bookData.toObject();
+
+    // let reviewData = updatedReview.toObject();
+
     let responseData = { bookData, updatedReview};
 
     return res
@@ -176,7 +181,14 @@ const deleteReview = async function (req, res) {
 
     let deletReview = await reviewModel.findOneAndUpdate({ _id: reviewId, bookId: bookId, isDeleted: false },
 
-      { $set: { isDeleted: true, deletedAt: new Date(), reviews: bookData.reviews - 1 } }, { new: true })
+      { $set: { isDeleted: true, deletedAt: new Date(), reviews: bookData.reviews - 1} }, { new: true })
+
+      let upDateReview = await bookModel.findOneAndUpdate(
+        { _id: bookData._id },
+        { $inc: { reviews: -1 } },
+        { new: true }
+      );
+      
 
     if (!deletReview) { return res.status(404).send({ status: false, message: "Review not Exist!" }) }
 
