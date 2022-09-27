@@ -63,7 +63,7 @@ const createUser = async function (req, res) {
     let emailVerify = await userModel.findOne({ email: email })
 
     if (emailVerify) {
-      return res.status(409).send({ status: false, msg: "this email already exists please provide another email" })
+      return res.status(400).send({ status: false, msg: "this email already exists please provide another email" })
     }
 
     //------------password validation------------------------//
@@ -121,15 +121,21 @@ const login = async (req, res) => {
     const token = jwt.sign(
       {
         userId: userLogin._id,
-        group: "39", iat: Math.floor(Date.now() / 1000) - 30
+        group: "39",
+         iat: Math.floor(Date.now() / 1000) - 30
       }, "project3-secret-key",
       { expiresIn: "24h" });
 
+     let decoded = jwt.verify(token, 'project3-secret-key');
     //set token to the header
 
     res.setHeader('x-api-key', token);
 
-    return res.status(200).send({ status: true, message: "login succesfully", token: token });
+    let iat = decoded.iat, exp = decoded.exp
+
+    let op = {token, iat, exp }
+
+    return res.status(200).send({ status: true, message: "login succesfully", token: op });
 
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });

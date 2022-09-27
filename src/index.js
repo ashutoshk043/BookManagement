@@ -19,7 +19,7 @@ mongoose
 
 app.use("/", routes);
 
-app.use("/", function (req, res) {
+app.use("/*", function (req, res) {
   res
     .status(400)
     .send({

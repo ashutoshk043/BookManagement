@@ -181,7 +181,7 @@ const deleteReview = async function (req, res) {
 
     let deletReview = await reviewModel.findOneAndUpdate({ _id: reviewId, bookId: bookId, isDeleted: false },
 
-      { $set: { isDeleted: true, deletedAt: new Date(), reviews: bookData.reviews - 1} }, { new: true })
+      { $set: { isDeleted: true, deletedAt: new Date()} }, { new: true })
 
       let upDateReview = await bookModel.findOneAndUpdate(
         { _id: bookData._id },
